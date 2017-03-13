@@ -1,5 +1,7 @@
 <?php
 
+namespace OAuth1\store;
+
 use OAuth1\OAuthException2;
 
 /**
