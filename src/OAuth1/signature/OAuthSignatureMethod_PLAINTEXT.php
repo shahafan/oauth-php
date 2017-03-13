@@ -3,11 +3,11 @@
 namespace OAuth1\signature;
 
 /**
- * Interface for OAuth signature methods
+ * OAuth signature implementation using PLAINTEXT
  *
  * @version $Id$
  * @author Marc Worrell <marcw@pobox.com>
- * @date  Sep 8, 2008 12:04:35 PM
+ * @date  Sep 8, 2008 12:09:43 PM
  *
  * The MIT License
  *
@@ -32,17 +32,18 @@ namespace OAuth1\signature;
  * THE SOFTWARE.
  */
 
-abstract class OAuthSignatureMethod
+
+
+class OAuthSignatureMethod_PLAINTEXT extends OAuthSignatureMethod
 {
-	/**
-	 * Return the name of this signature
-	 *
-	 * @return string
-	 */
-	abstract public function name();
+	public function name ()
+	{
+		return 'PLAINTEXT';
+	}
+
 
 	/**
-	 * Return the signature for the given request
+	 * Calculate the signature using PLAINTEXT
 	 *
 	 * @param OAuthRequest request
 	 * @param string base_string
@@ -50,7 +51,11 @@ abstract class OAuthSignatureMethod
 	 * @param string token_secret
 	 * @return string
 	 */
-	abstract public function signature ( $request, $base_string, $consumer_secret, $token_secret );
+	function signature ( $request, $base_string, $consumer_secret, $token_secret )
+	{
+		return $request->urlencode($request->urlencode($consumer_secret).'&'.$request->urlencode($token_secret));
+	}
+
 
 	/**
 	 * Check if the request signature corresponds to the one calculated for the request.
@@ -62,9 +67,14 @@ abstract class OAuthSignatureMethod
 	 * @param string signature		from the request, still urlencoded
 	 * @return string
 	 */
-	abstract public function verify ( $request, $base_string, $consumer_secret, $token_secret, $signature );
-}
+	public function verify ( $request, $base_string, $consumer_secret, $token_secret, $signature )
+	{
+		$a = $request->urldecode($signature);
+		$b = $request->urldecode($this->signature($request, $base_string, $consumer_secret, $token_secret));
 
+		return $request->urldecode($a) == $request->urldecode($b);
+	}
+}
 
 /* vi:set ts=4 sts=4 sw=4 binary noeol: */
 

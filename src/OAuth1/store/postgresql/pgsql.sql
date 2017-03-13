@@ -30,7 +30,7 @@ COMMENT ON TABLE oauth_log IS 'Log table to hold all OAuth request when you enab
 # for a certain server.  From that server we can check if we have a token for a
 # particular user.
 
-CREATE TABLE oauth_consumer_registry (
+CREATE TABLE wp_oauth_consumer_registry (
     ocr_id                  serial primary key,
     ocr_usa_id_ref          text,
     ocr_consumer_key        varchar(128) not null,
@@ -48,7 +48,7 @@ CREATE TABLE oauth_consumer_registry (
     unique (ocr_consumer_key, ocr_usa_id_ref, ocr_server_uri)
 );
 
-COMMENT ON TABLE oauth_consumer_registry IS 'This is a registry of all consumer codes we got from other servers';
+COMMENT ON TABLE wp_oauth_consumer_registry IS 'This is a registry of all consumer codes we got from other servers';
 
 # Table used to sign requests for sending to a server by the consumer
 # The key is defined for a particular user.  Only one single named
@@ -61,7 +61,7 @@ CREATE TYPE consumer_token_type AS ENUM (
     'access'
 );
 
-CREATE TABLE oauth_consumer_token (
+CREATE TABLE wp_oauth_consumer_token (
     oct_id                  serial primary key,
     oct_ocr_id_ref          integer not null,
     oct_usa_id_ref          text not null,
@@ -75,13 +75,13 @@ CREATE TABLE oauth_consumer_token (
     unique (oct_ocr_id_ref, oct_token),
     unique (oct_usa_id_ref, oct_ocr_id_ref, oct_token_type, oct_name),
 
-    foreign key (oct_ocr_id_ref) references oauth_consumer_registry (ocr_id)
+    foreign key (oct_ocr_id_ref) references wp_oauth_consumer_registry (ocr_id)
         on update cascade
         on delete cascade
 );
 
 
-COMMENT ON TABLE oauth_consumer_token IS 'Table used to sign requests for sending to a server by the consumer';
+COMMENT ON TABLE wp_oauth_consumer_token IS 'Table used to sign requests for sending to a server by the consumer';
 
 #
 # ////////////////// SERVER SIDE /////////////////
@@ -90,7 +90,7 @@ COMMENT ON TABLE oauth_consumer_token IS 'Table used to sign requests for sendin
 # Table holding consumer key/secret combos an user issued to consumers.
 # Used for verification of incoming requests.
 
-CREATE TABLE oauth_server_registry (
+CREATE TABLE wp_oauth_server_registry (
     osr_id                      serial primary key,
     osr_usa_id_ref              text,
     osr_consumer_key            varchar(64) not null,
@@ -113,13 +113,13 @@ CREATE TABLE oauth_server_registry (
 );
 
 
-COMMENT ON TABLE oauth_server_registry IS 'Table holding consumer key/secret combos an user issued to consumers';
+COMMENT ON TABLE wp_oauth_server_registry IS 'Table holding consumer key/secret combos an user issued to consumers';
 
 # Nonce used by a certain consumer, every used nonce should be unique, this prevents
 # replaying attacks.  We need to store all timestamp/nonce combinations for the
 # maximum timestamp received.
 
-CREATE TABLE oauth_server_nonce (
+CREATE TABLE wp_oauth_server_nonce (
     osn_id                  serial primary key,
     osn_consumer_key        varchar(64) not null,
     osn_token               varchar(64) not null,
@@ -130,7 +130,7 @@ CREATE TABLE oauth_server_nonce (
 );
 
 
-COMMENT ON TABLE oauth_server_nonce IS 'Nonce used by a certain consumer, every used nonce should be unique, this prevents replaying attacks';
+COMMENT ON TABLE wp_oauth_server_nonce IS 'Nonce used by a certain consumer, every used nonce should be unique, this prevents replaying attacks';
 
 # Table used to verify signed requests sent to a server by the consumer
 # When the verification is succesful then the associated user id is returned.
@@ -141,7 +141,7 @@ CREATE TYPE server_token_type AS ENUM (
     'access'
 );
 
-CREATE TABLE oauth_server_token (
+CREATE TABLE wp_oauth_server_token (
     ost_id                  serial primary key,
     ost_osr_id_ref          integer not null,
     ost_usa_id_ref          text not null,
@@ -157,10 +157,10 @@ CREATE TABLE oauth_server_token (
 
     unique (ost_token),
 
-	foreign key (ost_osr_id_ref) references oauth_server_registry (osr_id)
+	foreign key (ost_osr_id_ref) references wp_oauth_server_registry (osr_id)
         on update cascade
         on delete cascade
 );
 
 
-COMMENT ON TABLE oauth_server_token IS 'Table used to verify signed requests sent to a server by the consumer';
+COMMENT ON TABLE wp_oauth_server_token IS 'Table used to verify signed requests sent to a server by the consumer';

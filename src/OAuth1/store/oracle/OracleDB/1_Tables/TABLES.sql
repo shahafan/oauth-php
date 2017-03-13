@@ -18,7 +18,7 @@ alter table oauth_log
   add constraint oauth_log_pk primary key (olg_id);
   
 
-CREATE TABLE oauth_consumer_registry 
+CREATE TABLE wp_oauth_consumer_registry 
 (
     ocr_id                  number,
     ocr_usa_id_ref          number,
@@ -34,11 +34,11 @@ CREATE TABLE oauth_consumer_registry
     ocr_timestamp           date default sysdate
 )
 
-alter table oauth_consumer_registry
-  add constraint oauth_consumer_registry_pk primary key (ocr_id);
+alter table wp_oauth_consumer_registry
+  add constraint wp_oauth_consumer_registry_pk primary key (ocr_id);
   
 
-CREATE TABLE oauth_consumer_token 
+CREATE TABLE wp_oauth_consumer_token 
 (
   oct_id                  number,
   oct_ocr_id_ref          number,
@@ -51,11 +51,11 @@ CREATE TABLE oauth_consumer_token
   oct_timestamp           date default sysdate
 );
 
-alter table oauth_consumer_token
-  add constraint oauth_consumer_token_pk primary key (oct_id);
+alter table wp_oauth_consumer_token
+  add constraint wp_oauth_consumer_token_pk primary key (oct_id);
   
   
-CREATE TABLE oauth_server_registry 
+CREATE TABLE wp_oauth_server_registry 
 (
     osr_id                      number,
     osr_usa_id_ref              number,
@@ -77,11 +77,11 @@ CREATE TABLE oauth_server_registry
 );
 
 
-alter table oauth_server_registry
-  add constraint oauth_server_registry_pk primary key (osr_id);
+alter table wp_oauth_server_registry
+  add constraint wp_oauth_server_registry_pk primary key (osr_id);
   
 
-CREATE TABLE oauth_server_nonce 
+CREATE TABLE wp_oauth_server_nonce 
 (
   osn_id                  number,
   osn_consumer_key        varchar2(64),
@@ -90,11 +90,11 @@ CREATE TABLE oauth_server_nonce
   osn_nonce               varchar2(80)
 );
 
-alter table oauth_server_nonce
-  add constraint oauth_server_nonce_pk primary key (osn_id);
+alter table wp_oauth_server_nonce
+  add constraint wp_oauth_server_nonce_pk primary key (osn_id);
   
   
-CREATE TABLE oauth_server_token 
+CREATE TABLE wp_oauth_server_token 
 (
     ost_id                  number,
     ost_osr_id_ref          number,
@@ -110,5 +110,5 @@ CREATE TABLE oauth_server_token
     ost_callback_url        varchar2(512)
 );
 
-alter table oauth_server_token
-  add constraint oauth_server_token_pk primary key (ost_id);
+alter table wp_oauth_server_token
+  add constraint wp_oauth_server_token_pk primary key (ost_id);

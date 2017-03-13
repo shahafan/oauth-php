@@ -4,28 +4,28 @@ namespace OAuth1\discovery;
 
 /**
  * Parse a XRDS discovery description to a simple array format.
- * 
+ *
  * For now a simple parse of the document. Better error checking
  * in a later version.
- * 
+ *
  * @version $Id$
  * @author Marc Worrell <marcw@pobox.com>
- * 
- * 
+ *
+ *
  * The MIT License
- * 
+ *
  * Copyright (c) 2007-2008 Mediamatic Lab
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -42,15 +42,15 @@ $file = file_get_contents('../../test/discovery/xrds-magnolia.xrds');
 $xrds = xrds_parse($file);
 print_r($xrds);
 
- */ 
+ */
 
 /**
- * Parse the xrds file in the argument.  The xrds description must have been 
+ * Parse the xrds file in the argument.  The xrds description must have been
  * fetched via curl or something else.
- * 
+ *
  * TODO: more robust checking, support for more service documents
  * TODO: support for URIs to definition instead of local xml:id
- * 
+ *
  * @param string data contents of xrds file
  * @exception Exception when the file is in an unknown format
  * @return array
@@ -63,7 +63,7 @@ function xrds_parse ( $data )
 	{
 		throw new Exception('Error in XML, can\'t load XRDS document');
 	}
-	
+
 	$xpath = new DOMXPath($doc);
 	$xpath->registerNamespace('xrds',	'xri://$xrds');
 	$xpath->registerNamespace('xrd',  	'xri://$XRD*($v*2.0)');
@@ -94,7 +94,7 @@ function xrds_parse ( $data )
 
 /**
  * Parse a XRD definition for OAuth and return the uris etc.
- * 
+ *
  * @param XPath xpath
  * @param string id
  * @return array
@@ -136,7 +136,7 @@ function xrds_xrd_oauth ( $xpath, $id )
 				break;
 			}
 		}
-		
+
 		// Flatten the services on priority
 		foreach ($services as $type => $service)
 		{
@@ -153,7 +153,7 @@ function xrds_xrd_oauth ( $xpath, $id )
 
 /**
  * Parse a service definition for OAuth in a simple xrd element
- * 
+ *
  * @param DOMElement n
  * @return array (type, service desc)
  */
@@ -170,7 +170,7 @@ function xrds_xrd_oauth_service ( $n )
 	{
 		$name  = $c->nodeName;
 		$value = $c->nodeValue;
-		
+
 		if ($name == 'URI')
 		{
 			$service['uri'] = $value;
@@ -216,7 +216,7 @@ function xrds_xrd_oauth_service ( $n )
 
 /**
  * Return the OAuth service uris in order of the priority.
- * 
+ *
  * @param XPath xpath
  * @return array
  */
@@ -249,7 +249,7 @@ function xrds_oauth_service_uris ( $xpath )
 
 /**
  * Flatten an array according to the priority
- * 
+ *
  * @param array  ps buckets per prio
  * @return array one dimensional array
  */
@@ -279,7 +279,7 @@ function xrds_priority_flatten ( $ps )
 
 /**
  * Fetch the priority of a element
- * 
+ *
  * @param DOMElement elt
  * @return mixed		'null' or int
  */
@@ -302,5 +302,5 @@ function xrds_priority ( $elt )
 
 
 /* vi:set ts=4 sts=4 sw=4 binary noeol: */
- 
+
 ?>

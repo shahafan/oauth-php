@@ -12,27 +12,27 @@
 # Changes:
 #
 # 2010-09-15 
-#			ALTER TABLE oauth_server_token MODIFY ost_referrer_host varchar(128) not null default '';
+#			ALTER TABLE wp_oauth_server_token MODIFY ost_referrer_host varchar(128) not null default '';
 #
 # 2010-07-22 
-#			ALTER TABLE oauth_consumer_registry DROP INDEX ocr_consumer_key;
-#			ALTER TABLE oauth_consumer_registry ADD UNIQUE ocr_consumer_key(ocr_consumer_key,ocr_usa_id_ref,ocr_server_uri)
+#			ALTER TABLE wp_oauth_consumer_registry DROP INDEX ocr_consumer_key;
+#			ALTER TABLE wp_oauth_consumer_registry ADD UNIQUE ocr_consumer_key(ocr_consumer_key,ocr_usa_id_ref,ocr_server_uri)
 #
 # 2010-04-20 (on 103 and 110)
-#           ALTER TABLE oauth_consumer_registry MODIFY ocr_consumer_key varchar(128) binary not null;
-#           ALTER TABLE oauth_consumer_registry MODIFY ocr_consumer_secret varchar(128) binary not null;
+#           ALTER TABLE wp_oauth_consumer_registry MODIFY ocr_consumer_key varchar(128) binary not null;
+#           ALTER TABLE wp_oauth_consumer_registry MODIFY ocr_consumer_secret varchar(128) binary not null;
 #
 # 2010-04-20 (on 103 and 110)
-# 			ALTER TABLE oauth_server_token ADD ost_verifier char(10);
-# 			ALTER TABLE oauth_server_token ADD ost_callback_url varchar(512);
+# 			ALTER TABLE wp_oauth_server_token ADD ost_verifier char(10);
+# 			ALTER TABLE wp_oauth_server_token ADD ost_callback_url varchar(512);
 #
 # 2008-10-15 (on r48) Added ttl to consumer and server tokens, added named server tokens
 #
-#			ALTER TABLE oauth_server_token 
+#			ALTER TABLE wp_oauth_server_token 
 #			ADD ost_token_ttl datetime not null default '9999-12-31',
 #			ADD KEY (ost_token_ttl);
 #
-#			ALTER TABLE oauth_consumer_token 
+#			ALTER TABLE wp_oauth_consumer_token 
 #			ADD oct_name varchar(64) binary not null default '',
 #			ADD oct_token_ttl datetime not null default '9999-12-31',
 #			DROP KEY oct_usa_id_ref,
@@ -41,7 +41,7 @@
 #
 # 2008-09-09 (on r5) Added referrer host to server access token
 #
-#			ALTER TABLE oauth_server_token ADD ost_referrer_host VARCHAR(128) NOT NULL;
+#			ALTER TABLE wp_oauth_server_token ADD ost_referrer_host VARCHAR(128) NOT NULL;
 #
 
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS oauth_log (
 # for a certain server.  From that server we can check if we have a token for a
 # particular user.
 
-CREATE TABLE IF NOT EXISTS oauth_consumer_registry (
+CREATE TABLE IF NOT EXISTS wp_oauth_consumer_registry (
     ocr_id                  int(11) not null auto_increment,
     ocr_usa_id_ref          int(11),
     ocr_consumer_key        varchar(128) binary not null,
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS oauth_consumer_registry (
 # The key is defined for a particular user.  Only one single named
 # key is allowed per user/server combination
 
-CREATE TABLE IF NOT EXISTS oauth_consumer_token (
+CREATE TABLE IF NOT EXISTS wp_oauth_consumer_token (
     oct_id                  int(11) not null auto_increment,
     oct_ocr_id_ref          int(11) not null,
     oct_usa_id_ref          int(11) not null,
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS oauth_consumer_token (
     unique key (oct_usa_id_ref, oct_ocr_id_ref, oct_token_type, oct_name),
 	key (oct_token_ttl),
 
-    foreign key (oct_ocr_id_ref) references oauth_consumer_registry (ocr_id)
+    foreign key (oct_ocr_id_ref) references wp_oauth_consumer_registry (ocr_id)
         on update cascade
         on delete cascade
 
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS oauth_consumer_token (
 # Table holding consumer key/secret combos an user issued to consumers. 
 # Used for verification of incoming requests.
 
-CREATE TABLE IF NOT EXISTS oauth_server_registry (
+CREATE TABLE IF NOT EXISTS wp_oauth_server_registry (
     osr_id                      int(11) not null auto_increment,
     osr_usa_id_ref              int(11),
     osr_consumer_key            varchar(64) binary not null,
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS oauth_server_registry (
 # replaying attacks.  We need to store all timestamp/nonce combinations for the
 # maximum timestamp received.
 
-CREATE TABLE IF NOT EXISTS oauth_server_nonce (
+CREATE TABLE IF NOT EXISTS wp_oauth_server_nonce (
     osn_id                  int(11) not null auto_increment,
     osn_consumer_key        varchar(64) binary not null,
     osn_token               varchar(64) binary not null,
@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS oauth_server_nonce (
 # Table used to verify signed requests sent to a server by the consumer
 # When the verification is succesful then the associated user id is returned.
 
-CREATE TABLE IF NOT EXISTS oauth_server_token (
+CREATE TABLE IF NOT EXISTS wp_oauth_server_token (
     ost_id                  int(11) not null auto_increment,
     ost_osr_id_ref          int(11) not null,
     ost_usa_id_ref          int(11) not null,
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS oauth_server_token (
     key (ost_osr_id_ref),
 	key (ost_token_ttl),
 
-	foreign key (ost_osr_id_ref) references oauth_server_registry (osr_id)
+	foreign key (ost_osr_id_ref) references wp_oauth_server_registry (osr_id)
         on update cascade
         on delete cascade
 

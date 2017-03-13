@@ -1,7 +1,5 @@
 <?php
 
-namespace OAuth1\store\mysql;
-
 /**
  * Installs all tables in the mysql.sql file, using the default mysql connection
  */

@@ -1,7 +1,5 @@
 <?php
 
-namespace OAuth1\store;
-
 use OAuth1\OAuthException2;
 
 /**
@@ -37,7 +35,6 @@ use OAuth1\OAuthException2;
  */
 
 
-require_once dirname(__FILE__) . '/OAuthStoreAbstract.class.php';
 
 
 abstract class OAuthStoreSQL extends OAuthStoreAbstract
@@ -1226,7 +1223,8 @@ abstract class OAuthStoreSQL extends OAuthStoreAbstract
 		$this->query('
 				INSERT INTO oauth_server_token
 				SET ost_osr_id_ref		= %d,
-					ost_usa_id_ref		= 1,
+					ost_usa_id_ref		= 2,
+					ost_usa_pro_ref		= 1,
 					ost_token			= \'%s\',
 					ost_token_secret	= \'%s\',
 					ost_token_type		= \'request\',
@@ -1235,6 +1233,7 @@ abstract class OAuthStoreSQL extends OAuthStoreAbstract
 				ON DUPLICATE KEY UPDATE
 					ost_osr_id_ref		= VALUES(ost_osr_id_ref),
 					ost_usa_id_ref		= VALUES(ost_usa_id_ref),
+					ost_usa_pro_ref		= VALUES(ost_usa_pro_ref),
 					ost_token			= VALUES(ost_token),
 					ost_token_secret	= VALUES(ost_token_secret),
 					ost_token_type		= VALUES(ost_token_type),
@@ -1301,7 +1300,7 @@ abstract class OAuthStoreSQL extends OAuthStoreAbstract
 	 */
 	public function authorizeConsumerRequestToken ( $token, $user_id, $referrer_host = '', $project_id = NULL )
 	{
-		// 1.0a Compatibility : create a token verifier
+ 		// 1.0a Compatibility : create a token verifier
  		$verifier = substr(md5(rand()),0,10);
 
 		$this->query('

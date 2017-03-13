@@ -6,28 +6,27 @@ use OAuth1\discovery\xrds_parse;
 use OAuth1\OAuthException2;
 use OAuth1\OAuthRequestLogger;
 
-
 /**
  * Handle the discovery of OAuth service provider endpoints and static consumer identity.
- * 
+ *
  * @version $Id$
  * @author Marc Worrell <marcw@pobox.com>
  * @date  Sep 4, 2008 5:05:19 PM
- * 
+ *
  * The MIT License
- * 
+ *
  * Copyright (c) 2007-2008 Mediamatic Lab
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,10 +36,6 @@ use OAuth1\OAuthRequestLogger;
  * THE SOFTWARE.
  */
 
-// require_once dirname(__FILE__).'/discovery/xrds_parse.php';
-
-// require_once dirname(__FILE__).'/OAuthException2.php';
-// require_once dirname(__FILE__).'/OAuthRequestLogger.php';
 
 
 class OAuthDiscovery
@@ -48,9 +43,9 @@ class OAuthDiscovery
 	/**
 	 * Return a description how we can do a consumer allocation.  Prefers static allocation if
 	 * possible.  If static allocation is possible
-	 * 
+	 *
 	 * See also: http://oauth.net/discovery/#consumer_identity_types
-	 * 
+	 *
 	 * @param string uri
 	 * @return array		provider description
 	 */
@@ -134,12 +129,12 @@ class OAuthDiscovery
 		}
 		return $p;
 	}
-	
-	
+
+
 	/**
 	 * Discover the XRDS file at the uri.  This is a bit primitive, you should overrule
 	 * this function so that the XRDS file can be cached for later referral.
-	 * 
+	 *
 	 * @param string uri
 	 * @return string		false when no XRDS file found
 	 */
@@ -150,13 +145,13 @@ class OAuthDiscovery
 		{
 			return false;
 		}
-		
+
 		$data = self::curl($uri);
 
 		// Check what we got back, could be:
 		// 1. The XRDS discovery file itself (check content-type)
 		// 2. The X-XRDS-Location header
-		
+
 		if (is_string($data) && !empty($data))
 		{
 			list($head,$body) = explode("\r\n\r\n", $data);
@@ -197,11 +192,11 @@ class OAuthDiscovery
 		}
 		return $xrds;
 	}
-	
-	
+
+
 	/**
 	 * Try to fetch an XRDS file at the given location.  Sends an accept header preferring the xrds file.
-	 * 
+	 *
 	 * @param string uri
 	 * @return array	(head,body), false on an error
 	 */

@@ -3,6 +3,8 @@
 namespace OAuth1\store;
 
 use PDO;
+use PDOException;
+use OAuth1\OAuthException2;
 
 /**
  * Storage container for the oauth credentials, both server and consumer side.
@@ -34,8 +36,6 @@ use PDO;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-require_once dirname(__FILE__) . '/OAuthStoreSQL.php';
 
 
 class OAuthStorePDO extends OAuthStoreSQL

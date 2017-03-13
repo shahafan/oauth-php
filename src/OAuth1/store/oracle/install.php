@@ -1,6 +1,6 @@
 <?php
 
-namespace OAuth1\store\oracle;
+
 /**
  Added by Vinay Kant Sahu.
 vinaykant.sahu@gmail.com

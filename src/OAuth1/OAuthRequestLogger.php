@@ -4,26 +4,26 @@ namespace OAuth1;
 
 /**
  * Log OAuth requests
- * 
+ *
  * @version $Id: OAuthRequestLogger.php 98 2010-03-08 12:48:59Z brunobg@corollarium.com $
  * @author Marc Worrell <marcw@pobox.com>
  * @date  Dec 7, 2007 12:22:43 PM
- * 
- * 
+ *
+ *
  * The MIT License
- * 
+ *
  * Copyright (c) 2007-2008 Mediamatic Lab
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,21 +33,21 @@ namespace OAuth1;
  * THE SOFTWARE.
  */
 
-class OAuthRequestLogger 
+class OAuthRequestLogger
 {
 	static private $logging			= 0;
-	static private $enable_logging	= null;
-	static private $store_log		= null;
+	static private $enable_logging	= true;
+	static private $store_log		= true;
 	static private $note 			= '';
 	static private $user_id			= null;
 	static private $request_object	= null;
 	static private $sent			= null;
 	static private $received		= null;
 	static private $log				= array();
-	
+
 	/**
 	 * Start any logging, checks the system configuration if logging is needed.
-	 * 
+	 *
 	 * @param OAuthRequest  $request_object
 	 */
 	static function start ( $request_object = null )
@@ -71,14 +71,14 @@ class OAuthRequestLogger
 			ob_start();
 
 			// Make sure we flush our log entry when we stop the request (eg on an exception)
-			register_shutdown_function(array('OAuthRequestLogger','flush'));		
+			register_shutdown_function(array('OAuthRequestLogger','flush'));
 		}
 	}
-	
+
 
 	/**
 	 * Force logging, needed for performing test connects independent from the debugging setting.
-	 * 
+	 *
 	 * @param boolean  store_log		(optional) true to store the log in the db
 	 */
 	static function enableLogging ( $store_log = null )
@@ -88,7 +88,7 @@ class OAuthRequestLogger
 		{
 			OAuthRequestLogger::$store_log = $store_log;
 		}
-	}	
+	}
 
 
 	/**
@@ -121,7 +121,7 @@ class OAuthRequestLogger
 				// The request we sent
 				$sent  = OAuthRequestLogger::$sent;
 			}
-			
+
 			if (is_null(OAuthRequestLogger::$received))
 			{
 				// Build the request we received
@@ -188,14 +188,14 @@ class OAuthRequestLogger
 					break;
 				}
 			}
-			
+
 			// Log the request
 			if (OAuthRequestLogger::$store_log)
 			{
 				$store = OAuthStore::instance();
 				$store->addLog($keys, $received, $sent, $base_string, OAuthRequestLogger::$note, OAuthRequestLogger::$user_id);
 			}
-			
+
 			OAuthRequestLogger::$log[] = array(
 					'keys'    		=> $keys,
 					'received'		=> $received,
@@ -209,7 +209,7 @@ class OAuthRequestLogger
 
 	/**
 	 * Add a note, used by the OAuthException2 to log all exceptions.
-	 * 
+	 *
 	 * @param string note
 	 */
 	static function addNote ( $note )
@@ -219,7 +219,7 @@ class OAuthRequestLogger
 
 	/**
 	 * Set the OAuth request object being used
-	 * 
+	 *
 	 * @param OAuthRequest request_object
 	 */
 	static function setRequestObject ( $request_object )
@@ -230,18 +230,18 @@ class OAuthRequestLogger
 
 	/**
 	 * Set the relevant user (defaults to the current user)
-	 * 
+	 *
 	 * @param int user_id
 	 */
 	static function setUser ( $user_id )
 	{
 		OAuthRequestLogger::$user_id = $user_id;
 	}
-	
-	
+
+
 	/**
 	 * Set the request we sent
-	 * 
+	 *
 	 * @param string request
 	 */
 	static function setSent ( $request )
@@ -251,18 +251,18 @@ class OAuthRequestLogger
 
 	/**
 	 * Set the reply we received
-	 * 
+	 *
 	 * @param string request
 	 */
 	static function setReceived ( $reply )
 	{
 		OAuthRequestLogger::$received = $reply;
 	}
-	
-	
+
+
 	/**
 	 * Get the the log till now
-	 * 
+	 *
 	 * @return array
 	 */
 	static function getLog ()
@@ -280,14 +280,14 @@ class OAuthRequestLogger
 	public static function getAllHeaders() {
 		$retarr = array();
 		$headers = array();
-		
+
 		if (function_exists('apache_request_headers')) {
 			$headers = apache_request_headers();
-			ksort($headers);
-			return $headers;
+			//ksort($headers);
+			//return $headers;
 		} else {
 			$headers = array_merge($_ENV, $_SERVER);
-			
+
 			foreach ($headers as $key => $val) {
 				//we need this header
 				if (strpos(strtolower($key), 'content-type') !== FALSE)
@@ -296,7 +296,7 @@ class OAuthRequestLogger
 					unset($headers[$key]);
 			}
 		}
-		
+
 		//Normalize this array to Cased-Like-This structure.
 		foreach ($headers AS $key => $value) {
 			$key = preg_replace('/^HTTP_/i', '', $key);
@@ -308,8 +308,23 @@ class OAuthRequestLogger
 			$retarr[$key] = $value;
 		}
 		ksort($retarr);
-		
+
+		//JORGE
+		foreach ($_SERVER AS $key => $value) {
+			$key = preg_replace('/^HTTP_/i', '', $key);
+			$key = str_replace('REDIRECT_', '', $key);
+			$key = str_replace('Redirect-', '', $key);
+			$key = str_replace(
+					" ",
+					"-",
+					ucwords(strtolower(str_replace(array("-", "_"), " ", $key)))
+				);
+			$retarr[$key] = $value;
+		}
+		ksort($retarr);
+
 		return $retarr;
+		//return($_SERVER);
 	}
 }
 
