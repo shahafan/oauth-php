@@ -3,11 +3,11 @@
 namespace OAuth1\signature;
 
 /**
- * OAuth signature implementation using MD5
+ * OAuth signature implementation using HMAC-SHA1
  *
  * @version $Id$
  * @author Marc Worrell <marcw@pobox.com>
- * @date  Sep 8, 2008 12:09:43 PM
+ * @date  Sep 8, 2008 12:21:19 PM
  *
  * The MIT License
  *
@@ -34,17 +34,16 @@ namespace OAuth1\signature;
 
 
 
-class OAuthSignatureMethod_MD5 extends OAuthSignatureMethod
+class OAuthSignatureMethodHMACSHA1 extends OAuthSignatureMethod
 {
 	public function name ()
 	{
-		return 'MD5';
+		return 'HMAC-SHA1';
 	}
 
 
 	/**
-	 * Calculate the signature using MD5
-	 * Binary md5 digest, as distinct from PHP's built-in hexdigest.
+	 * Calculate the signature using HMAC-SHA1
 	 * This function is copyright Andy Smith, 2007.
 	 *
 	 * @param OAuthRequest request
@@ -55,15 +54,34 @@ class OAuthSignatureMethod_MD5 extends OAuthSignatureMethod
 	 */
 	function signature ( $request, $base_string, $consumer_secret, $token_secret )
 	{
-		$s  .= '&'.$request->urlencode($consumer_secret).'&'.$request->urlencode($token_secret);
-		$md5 = md5($base_string);
-		$bin = '';
-
-		for ($i = 0; $i < strlen($md5); $i += 2)
+		$key = $request->urlencode($consumer_secret).'&'.$request->urlencode($token_secret);
+		if (function_exists('hash_hmac'))
 		{
-		    $bin .= chr(hexdec($md5{$i+1}) + hexdec($md5{$i}) * 16);
+			$signature = base64_encode(hash_hmac("sha1", $base_string, $key, true));
 		}
-		return $request->urlencode(base64_encode($bin));
+		else
+		{
+		    $blocksize	= 64;
+		    $hashfunc	= 'sha1';
+		    if (strlen($key) > $blocksize)
+		    {
+		        $key = pack('H*', $hashfunc($key));
+		    }
+		    $key	= str_pad($key,$blocksize,chr(0x00));
+		    $ipad	= str_repeat(chr(0x36),$blocksize);
+		    $opad	= str_repeat(chr(0x5c),$blocksize);
+		    $hmac 	= pack(
+		                'H*',$hashfunc(
+		                    ($key^$opad).pack(
+		                        'H*',$hashfunc(
+		                            ($key^$ipad).$base_string
+		                        )
+		                    )
+		                )
+		            );
+			$signature = base64_encode($hmac);
+		}
+		return $request->urlencode($signature);
 	}
 
 
@@ -90,6 +108,7 @@ class OAuthSignatureMethod_MD5 extends OAuthSignatureMethod
 		return rawurlencode($valA) == rawurlencode($valB);
 	}
 }
+
 
 /* vi:set ts=4 sts=4 sw=4 binary noeol: */
 
