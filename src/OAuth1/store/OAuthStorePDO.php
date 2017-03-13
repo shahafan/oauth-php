@@ -2,6 +2,8 @@
 
 namespace OAuth1\store;
 
+use PDO;
+
 /**
  * Storage container for the oauth credentials, both server and consumer side.
  * Based on MySQL
@@ -59,7 +61,7 @@ class OAuthStorePDO extends OAuthStoreSQL
 		{
 			try
 			{
-				$this->conn = new \PDO($options['dsn'], $options['username'], @$options['password']);
+				$this->conn = new PDO($options['dsn'], $options['username'], @$options['password']);
 			}
 			catch (PDOException $e)
 			{
