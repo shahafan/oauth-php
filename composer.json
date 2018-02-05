@@ -1,15 +1,11 @@
 {
-    "name": "zorrodg/oauth-php",
+    "name": "shahafan/oauth-php",
     "description": "OAuth composer implementation from oauth-php library from Marc Worrell",
     "license": "MIT",
     "authors": [
         {
             "name": "Marc Worrell",
             "email": "marcw@pobox.com"
-        },
-        {
-            "name": "Andres Zorro",
-            "email": "zorrodg@gmail.com"
         }
     ],
     "require": {
